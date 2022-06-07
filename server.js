@@ -2,7 +2,7 @@
 const express = require(`express`);
 const path = require(`path`);
 const fs = require(`fs`);
-const db = require(`./db/db.json`);
+const db = require(`./db/notes.json`);
 const { v4: uuidv4 } = require('uuid');
 const {
   readFromFile,
@@ -15,11 +15,11 @@ const PORT = process.env.PORT || 3001;
 //create an instance of express
 const app = express();
 
+app.use(express.static('public'));
+
 //middleware parses JSON and urlencoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static('public'));
 
 //Get route for homepage
 app.get(`/`, (req, res) =>
@@ -33,7 +33,7 @@ app.get('/notes', (req, res) =>
 
 // GET Route for retrieving all notes
 app.get('/api/notes', (req, res) => {
-  readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+  readFromFile('./db/notes.json').then((data) => res.json(JSON.parse(data)));
 });
 
 // POST Route for a new note
@@ -46,10 +46,11 @@ app.post('/api/notes', (req, res) => {
     const newNote = {
       title,
       text,
-      note_id: uuidv4(),
+      id: uuidv4(),
     };
 
-    readAndAppend(newNote, './db/notes.json');
+    readAndAppend(newNote,'./db/notes.json');
+    res.json(newNote);
 
   }
 });
