@@ -4,6 +4,8 @@ const path = require(`path`);
 const fs = require(`fs`);
 const db = require(`./db/notes.json`);
 const { v4: uuidv4 } = require('uuid');
+const uniqueId = new RegExp ("-", "g");
+function newId() {return uuidv4().replace(uniqueId, "_")};
 const {
   readFromFile,
   readAndAppend,
@@ -46,13 +48,30 @@ app.post('/api/notes', (req, res) => {
     const newNote = {
       title,
       text,
-      id: uuidv4(),
+      id: newId(),
     };
 
     readAndAppend(newNote,'./db/notes.json');
     res.json(newNote);
 
   }
+});
+
+// DELETE Route for a specific note
+app.delete('/api/notes/:id', (req, res) => {
+  const noteId = req.params.id;
+  readFromFile('./db/notes.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      // Make a new array of all tips except the one with the ID provided in the URL
+      const result = json.filter((app) => app.id !== noteId);
+
+      // Save that array to the filesystem
+      writeToFile('./db/notes.json', result);
+      res.json(result);
+
+      
+    });
 });
 
 
