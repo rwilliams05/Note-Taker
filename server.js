@@ -4,6 +4,7 @@ const path = require(`path`);
 const fs = require(`fs`);
 const db = require(`./db/notes.json`);
 const { v4: uuidv4 } = require('uuid');
+//modify id for delete function
 const uniqueId = new RegExp ("-", "g");
 function newId() {return uuidv4().replace(uniqueId, "_")};
 const {
@@ -12,33 +13,35 @@ const {
   writeToFile,
 } = require('./helpers/fsUtils');
 
+//define port
 const PORT = process.env.PORT || 3001;
 
 //create an instance of express
 const app = express();
 
+//serve static files
 app.use(express.static('public'));
 
 //middleware parses JSON and urlencoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//Get route for homepage
+//get route for homepage
 app.get(`/`, (req, res) =>
   res.sendFile(path.join(__dirname, "/public/index.html"))
 );
 
-
+//get route for notes page
 app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, "/public/notes.html"))
 );
 
-// GET Route for retrieving all notes
+// get Route for retrieving complete notes
 app.get('/api/notes', (req, res) => {
   readFromFile('./db/notes.json').then((data) => res.json(JSON.parse(data)));
 });
 
-// POST Route for a new note
+// post Route for a new note
 app.post('/api/notes', (req, res) => {
   console.log(req.body);
 
@@ -57,16 +60,16 @@ app.post('/api/notes', (req, res) => {
   }
 });
 
-// DELETE Route for a specific note
+// delete route for a specific note- from class mini-project and study group
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
   readFromFile('./db/notes.json')
     .then((data) => JSON.parse(data))
     .then((json) => {
-      // Make a new array of all tips except the one with the ID provided in the URL
+      // new array with deleted note filtered out
       const result = json.filter((app) => app.id !== noteId);
 
-      // Save that array to the filesystem
+      // saves and returns new array
       writeToFile('./db/notes.json', result);
       res.json(result);
 
