@@ -4,7 +4,7 @@ const path = require(`path`);
 const fs = require(`fs`);
 const db = require(`./db/notes.json`);
 const { v4: uuidv4 } = require('uuid');
-//modify id for delete function
+//modify id for delete function-hat tip to (classmate)John for the solution
 const uniqueId = new RegExp ("-", "g");
 function newId() {return uuidv4().replace(uniqueId, "_")};
 const {
@@ -36,12 +36,12 @@ app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, "/public/notes.html"))
 );
 
-// get Route for retrieving complete notes
+// get route for retrieving complete notes
 app.get('/api/notes', (req, res) => {
   readFromFile('./db/notes.json').then((data) => res.json(JSON.parse(data)));
 });
 
-// post Route for a new note
+// post route for new note
 app.post('/api/notes', (req, res) => {
   console.log(req.body);
 
@@ -60,7 +60,7 @@ app.post('/api/notes', (req, res) => {
   }
 });
 
-// delete route for a specific note- from class mini-project and study group
+// delete route for a specific note
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
   readFromFile('./db/notes.json')
@@ -73,6 +73,7 @@ app.delete('/api/notes/:id', (req, res) => {
       writeToFile('./db/notes.json', result);
       res.json(result);
 
+           
       
     });
 });
