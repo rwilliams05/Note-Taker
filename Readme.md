@@ -1,9 +1,8 @@
 
-Description
+## Description
 an easy to use front and back end note-taker app that allows the user to enter, save, and retrieve, and delete notes in a title plus text format, using node.js and express.
-Uses node.js and express
 
-Installation
+## Installation
 On the command line, install dependencies before running server.js
 
 ## Usage
